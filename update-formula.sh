@@ -7,19 +7,36 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-# Check if version argument is provided
-if [ $# -eq 0 ]; then
-    echo -e "${RED}Error: Version number required${NC}"
-    echo "Usage: ./update-formula.sh <version>"
-    echo "Example: ./update-formula.sh 0.1.3"
-    exit 1
-fi
-
-NEW_VERSION=$1
 PACKAGE_NAME="brewse"
 FORMULA_FILE="Formula/brewse.rb"
 
-echo -e "${YELLOW}Updating $PACKAGE_NAME to version $NEW_VERSION${NC}"
+# Get current version from formula
+CURRENT_VERSION=$(grep -E 'url "https://files.pythonhosted.org/packages/source/./.*/.*-.*\.tar\.gz"' "$FORMULA_FILE" | sed -E 's/.*-([0-9]+\.[0-9]+\.[0-9]+)\.tar\.gz.*/\1/')
+
+if [ -z "$CURRENT_VERSION" ]; then
+    # Fallback to a simpler grep if the above fails
+    CURRENT_VERSION=$(grep -oE '[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.]+)?' "$FORMULA_FILE" | head -n 1)
+fi
+
+# Determine new version
+if [ $# -eq 0 ]; then
+    echo -e "${YELLOW}No version provided. Fetching latest version for $PACKAGE_NAME from PyPI...${NC}"
+    NEW_VERSION=$(curl -s https://pypi.org/pypi/$PACKAGE_NAME/json | jq -r .info.version)
+    if [ "$NEW_VERSION" == "null" ] || [ -z "$NEW_VERSION" ]; then
+        echo -e "${RED}Error: Failed to fetch version from PyPI${NC}"
+        exit 1
+    fi
+    echo -e "${GREEN}✓ Latest version: $NEW_VERSION${NC}"
+else
+    NEW_VERSION=$1
+fi
+
+if [ "$NEW_VERSION" == "$CURRENT_VERSION" ]; then
+    echo -e "${GREEN}Formula is already up to date (version $CURRENT_VERSION)${NC}"
+    exit 0
+fi
+
+echo -e "${YELLOW}Updating $PACKAGE_NAME from $CURRENT_VERSION to $NEW_VERSION${NC}"
 
 # Construct PyPI URL
 PYPI_URL="https://files.pythonhosted.org/packages/source/${PACKAGE_NAME:0:1}/${PACKAGE_NAME}/${PACKAGE_NAME}-${NEW_VERSION}.tar.gz"
