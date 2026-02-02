@@ -3,8 +3,8 @@ class Brewse < Formula
 
   desc "Interactive TUI browser for Homebrew packages"
   homepage "https://github.com/jonasjancarik/brewse"
-  url "https://files.pythonhosted.org/packages/source/b/brewse/brewse-0.2.1.tar.gz"
-  sha256 "d754a196b78f796779ba0165d1485c189821c92bdcc715e40ca69900a5f9b363"
+  url "https://files.pythonhosted.org/packages/source/b/brewse/brewse-0.3.0.tar.gz"
+  sha256 "32c286d8a7b42232cf443144b3ae4baa10e66d29d15611db8e1600de5929e01b"
   license "MIT"
 
   depends_on "python@3.12"
