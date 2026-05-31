@@ -1,8 +1,8 @@
 class CodexAutofocus < Formula
   desc "Bring the Codex desktop app to the front when a Codex turn finishes"
   homepage "https://github.com/jonasjancarik/codex-autofocus"
-  url "https://github.com/jonasjancarik/codex-autofocus/archive/refs/tags/v0.1.4.tar.gz"
-  sha256 "7851e8f4df4cbe8bcd6e2e8b001c58756dea733ba715c6c27793c6e48fadd3fe"
+  url "https://github.com/jonasjancarik/codex-autofocus/archive/refs/tags/v0.1.5.tar.gz"
+  sha256 "6c8405b9bd4359230dadfe3ed6d739cdd99b8132da11f24cdcec6b9e0d6b1952"
   license :cannot_represent
 
   depends_on xcode: ["15.0", :build]
@@ -48,7 +48,7 @@ class CodexAutofocus < Formula
 
     (bin/"codex-autofocus-menu").write <<~EOS
       #!/bin/bash
-      exec /usr/bin/open -n "#{opt_prefix}/Codex Autofocus.app"
+      exec /usr/bin/open "#{opt_prefix}/Codex Autofocus.app"
     EOS
   end
 
@@ -67,6 +67,12 @@ class CodexAutofocus < Formula
 
       To start the menu bar app, run:
         codex-autofocus-menu
+
+      To make the app available from Spotlight, run:
+        codex-autofocus install-app --app "#{opt_prefix}/Codex Autofocus.app"
+
+      To open the menu bar app at login, run:
+        codex-autofocus enable-login-item --app "#{opt_prefix}/Codex Autofocus.app"
     EOS
   end
 
